@@ -1,8 +1,11 @@
 import 'package:assignment_restapi/Model/product_model.dart';
+import 'package:assignment_restapi/Utils/urls.dart';
+import 'package:assignment_restapi/screen/update_product_screen.dart';
 import 'package:flutter/material.dart';
+import 'package:http/http.dart';
 
-class ProductsItem extends StatefulWidget {
-  const ProductsItem({
+class ProductItem extends StatefulWidget {
+  const ProductItem({
     super.key,
     required this.product,
     required this.refreshProductList,
@@ -12,55 +15,86 @@ class ProductsItem extends StatefulWidget {
   final VoidCallback refreshProductList;
 
   @override
-  State<ProductsItem> createState() => _ProductsItemState();
+  State<ProductItem> createState() => _ProductItemState();
 }
 
-class _ProductsItemState extends State<ProductsItem> {
-  final bool _deleteProgress = false;
+class _ProductItemState extends State<ProductItem> {
+  bool _deleteInProgress = false;
+
   @override
   Widget build(BuildContext context) {
     return ListTile(
       leading: Image.network(
         width: 30,
-        Widget.product.image,
+        widget.product.image,
         errorBuilder: (_, __, ___) {
           return Icon(Icons.error_outline, size: 30);
         },
       ),
-      title: Text(Widget.product.name),
+      title: Text(widget.product.name),
       subtitle: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Text('Code: ${Widget.product.code}'),
+          Text('Code: ${widget.product.code}'),
           Row(
             spacing: 16,
             children: [
-              Text('Quantity: ${Widget.product.quantity}'),
-              Text('Quantity: ${Widget.product.UnitPrice}'),
+              Text('Quantity: ${widget.product.quantity}'),
+              Text('Unit Price: ${widget.product.uniPrice}'),
             ],
           ),
         ],
       ),
       trailing: Visibility(
-        visible: _deleteProgress == false,
+        visible: _deleteInProgress == false,
         replacement: CircularProgressIndicator(),
-
         child: PopupMenuButton<ProductOptions>(
-          itemBuilder: (context) {
+          itemBuilder: (ctx) {
             return [
               PopupMenuItem(
-                value: ProductOptions.Update,
-                child: Text("Update"),
+                value: ProductOptions.update,
+                child: Text('Update'),
               ),
               PopupMenuItem(
                 value: ProductOptions.delete,
-                child: Text("delete"),
+                child: Text('Delete'),
               ),
             ];
           },
-          onSelected: (ProductO),
+          onSelected: (ProductOptions selectedOption) {
+            if (selectedOption == ProductOptions.delete) {
+              _deleteProduct();
+            } else if (selectedOption == ProductOptions.update) {
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder:
+                      (context) => UpdateProductScreen(product: widget.product),
+                ),
+              );
+            }
+          },
         ),
       ),
     );
   }
+
+  Future<void> _deleteProduct() async {
+    _deleteInProgress = true;
+    setState(() {});
+
+    Uri uri = Uri.parse(Urls.deleteProductsUrl(widget.product.id));
+    Response response = await get(uri);
+
+    debugPrint(response.statusCode.toString());
+    debugPrint(response.body);
+
+    if (response.statusCode == 200) {
+      widget.refreshProductList();
+    }
+    _deleteInProgress = false;
+    setState(() {});
+  }
 }
+
+enum ProductOptions { update, delete }
