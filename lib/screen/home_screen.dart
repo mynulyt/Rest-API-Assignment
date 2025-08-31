@@ -50,8 +50,15 @@ class _HomeScreenState extends State<HomeScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: Colors.blue.withOpacity(0.2),
       appBar: AppBar(
-        title: Text('Product List'),
+        backgroundColor: Colors.green,
+        title: Center(
+          child: Text(
+            'Product List',
+            style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
+          ),
+        ),
         actions: [
           IconButton(
             onPressed: () {

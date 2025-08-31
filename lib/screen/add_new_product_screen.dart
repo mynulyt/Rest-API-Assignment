@@ -23,7 +23,16 @@ class _AddNewProductScreenState extends State<AddNewProductScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: Text('Add new product')),
+      backgroundColor: Colors.blue.withOpacity(0.2),
+      appBar: AppBar(
+        backgroundColor: Colors.green,
+        title: Center(
+          child: Text(
+            'Add new product',
+            style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
+          ),
+        ),
+      ),
       body: SingleChildScrollView(
         child: Form(
           key: _formKey,
@@ -36,6 +45,7 @@ class _AddNewProductScreenState extends State<AddNewProductScreen> {
                   controller: _nameTEController,
                   textInputAction: TextInputAction.next,
                   decoration: InputDecoration(
+                    border: OutlineInputBorder(),
                     hintText: 'Product name',
                     labelText: 'Product name',
                   ),
@@ -50,6 +60,7 @@ class _AddNewProductScreenState extends State<AddNewProductScreen> {
                   controller: _codeTEController,
                   textInputAction: TextInputAction.next,
                   decoration: InputDecoration(
+                    border: OutlineInputBorder(),
                     hintText: 'Product code',
                     labelText: 'Product code',
                   ),
@@ -65,6 +76,7 @@ class _AddNewProductScreenState extends State<AddNewProductScreen> {
                   keyboardType: TextInputType.number,
                   textInputAction: TextInputAction.next,
                   decoration: InputDecoration(
+                    border: OutlineInputBorder(),
                     hintText: 'Quantity',
                     labelText: 'Quantity',
                   ),
@@ -80,6 +92,7 @@ class _AddNewProductScreenState extends State<AddNewProductScreen> {
                   textInputAction: TextInputAction.next,
                   keyboardType: TextInputType.number,
                   decoration: InputDecoration(
+                    border: OutlineInputBorder(),
                     hintText: 'Unit price',
                     labelText: 'Unit price',
                   ),
@@ -93,6 +106,7 @@ class _AddNewProductScreenState extends State<AddNewProductScreen> {
                 TextFormField(
                   controller: _imageUrlTEController,
                   decoration: InputDecoration(
+                    border: OutlineInputBorder(),
                     hintText: 'Image Url',
                     labelText: 'Image Url',
                   ),
@@ -107,9 +121,12 @@ class _AddNewProductScreenState extends State<AddNewProductScreen> {
                 Visibility(
                   visible: _addProductInProgress == false,
                   replacement: Center(child: CircularProgressIndicator()),
-                  child: FilledButton(
-                    onPressed: _onTapAddProductButton,
-                    child: Text('Add Product'),
+                  child: SizedBox(
+                    width: double.infinity,
+                    child: FilledButton(
+                      onPressed: _onTapAddProductButton,
+                      child: Text('Add Product'),
+                    ),
                   ),
                 ),
               ],
@@ -127,9 +144,9 @@ class _AddNewProductScreenState extends State<AddNewProductScreen> {
 
     _addProductInProgress = true;
     setState(() {});
-    // Prepare URI to request
+
     Uri uri = Uri.parse('http://35.73.30.144:2008/api/v1/CreateProduct');
-    // Prepare data
+
     int totalPrice =
         int.parse(_priceTEController.text) *
         int.parse(_quantityTEController.text);
@@ -141,7 +158,7 @@ class _AddNewProductScreenState extends State<AddNewProductScreen> {
       "UnitPrice": int.parse(_priceTEController.text.trim()),
       "TotalPrice": totalPrice,
     };
-    // Request with data
+
     Response response = await post(
       uri,
       headers: {'Content-Type': 'application/json'},
