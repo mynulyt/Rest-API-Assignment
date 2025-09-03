@@ -60,6 +60,7 @@ class _UpdateProductScreenState extends State<UpdateProductScreen> {
                       (value) => value!.isEmpty ? 'Enter product name' : null,
                   decoration: const InputDecoration(
                     border: OutlineInputBorder(),
+                    hintStyle: TextStyle(color: Colors.white),
                     labelText: 'Product Name',
                   ),
                 ),
